@@ -6,9 +6,6 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "inflect==7.5.0",
-    "kanjize==1.6.0",
-    "sudachidict-full>=20241021",
-    "sudachipy>=0.6.10",
 ]
 
 # These are technically optional, but mamba-ssm is required to run hybrid models.

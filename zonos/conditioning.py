@@ -55,14 +55,11 @@ class Conditioner(nn.Module):
 import os
 import sys
 import re
-import unicodedata
 
 import inflect
 import torch
 import torch.nn as nn
-from kanjize import number2kanji
 from phonemizer.backend import EspeakBackend
-from sudachipy import Dictionary, SplitMode
 
 if sys.platform == "darwin":
     os.environ["PHONEMIZER_ESPEAK_LIBRARY"] = "/opt/homebrew/lib/libespeak-ng.dylib"
@@ -168,20 +165,11 @@ def tokenize_phonemes(phonemes: list[str]) -> tuple[torch.Tensor, list[int]]:
     return torch.tensor(phoneme_ids), lengths
 
 
-def normalize_jp_text(text: str, tokenizer=Dictionary(dict="full").create()) -> str:
-    text = unicodedata.normalize("NFKC", text)
-    text = re.sub(r"\d+", lambda m: number2kanji(int(m[0])), text)
-    final_text = " ".join([x.reading_form() for x in tokenizer.tokenize(text, SplitMode.A)])
-    return final_text
-
 
 def clean(texts: list[str], languages: list[str]) -> list[str]:
     texts_out = []
-    for text, language in zip(texts, languages):
-        if "ja" in language:
-            text = normalize_jp_text(text)
-        else:
-            text = normalize_numbers(text)
+    for text, _ in zip(texts, languages):
+        text = normalize_numbers(text)
         texts_out.append(text)
     return texts_out
 
